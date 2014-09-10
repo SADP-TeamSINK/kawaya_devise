@@ -10,71 +10,57 @@ import json
 
 
 class Checker:
-    def __init__(self, id, url, time, sensor):
+    def __init__(self, id, url, sensor, pre_exist):
         # 端末の固有IDを登録
         self.id = id
-        self.existence = False
-        self.time = time
-        self.url = url + "/" + str(self.id) + "/"
+        self.url = url  
         self.sensor = sensor #センサー情報（人がいればtrue）
+        self.proxyDict = Setting.proxyDict
+        self.pre_exist = pre_exist #前の状態のavailable
 
     #監視処理の開始
     def start(self):
         print "Start to check this room!"
-        while True:
-            print "Now, there is ", self.existence
+        print "Now, there is ", self.pre_exist
 
-            # 距離の取得間隔
-            time.sleep(self.time)
-            # 距離の取得
-            #d = reading(0)
+        try:
 
-            try:
-                print d
-
-                if self.sensor:
+            if self.sensor:
                     # もし規定距離内に反応があった場合
-                    self.exist()
-                else:
+                self.exist()
+            else:
                     # 規定距離内に反応がなかった場合
-                    self.not_exist()
-            except:
-                print "Exception caught!!", sys.exc_info()[0]
+                self.not_exist()
+        except:
+            print "Exception caught!!", sys.exc_info()[0]
+
+        return self.pre_exist#現在のセンサー情報を返す
                 
     # センサーが人を感知した場合
     def exist(self):
         print "someone exists"
-        if not self.existence:
-            self.existence = True
-            # api_url = self.url + "1"
-            # print "api-url: ", api_url
-            # r = requests.patch(api_url)
+        if not self.pre_exist:
+            self.pre_exist = True
             json_data = {"room_id": self.id, "status": 1}
             headers={'content-type': 'application/json'}
             api_url=self.url
-            print "send to: ", api_url
-            r = requests.post(api_url, data=json.dumps(json_data,indent=2), headers=headers)
+            encoded_json=json.dumps(json_data,indent=1)
+            print "send to:", api_url
+            print encoded_json
+            print headers
+            r = requests.post(api_url, data=encoded_json, headers=headers, proxies=self.proxyDict)
             print r
 
-    # センサーが人を完治しなかった場合
+    # センサーが人を感知しなかった場合
     def not_exist(self):
         print "noone exists"
-        if self.existence:
-            self.existence = False
-            # api_url = self.url + "0"
-            # print "api-url: ", api_url
-            # r = requests.patch(api_url)
+        if self.pre_exist:
+            self.pre_exist = False
             json_data = {"room_id": self.id, "status": 0}
             headers={'content-type': 'application/json'}
+            encoded_json=json.dumps(json_data)
             api_url=self.url
-            print "send to: ", api_url
-            r = requests.post(api_rl, data=json.dumps(json_data,indent=2), headers=headers)
+            print "send to:", api_url
+            print encoded_json
+            r = requests.post(api_url, data=encoded_json, headers=headers, proxies=self.proxyDict)
             print r
-
-
-# if __name__ == '__main__':
-#     ID = Setting.ID;
-#     url = Setting.url;
-#     time = Setting.time
-#     ch = Checker(ID, url, time, sensor);
-#     ch.start();

@@ -96,6 +96,7 @@ def reading(sensor):
         distance = timepassed * 17000
         
         # return the distance of an object in front of the sensor in cm
+        print distance
         return distance
         
         # we're no longer using the GPIO, so tell software we're done

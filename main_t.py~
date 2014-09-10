@@ -1,6 +1,7 @@
 #!/usr/bin/python
     # coding: UTF-8
-
+import json
+import requests
 from util import reading 
 import os
 import time
@@ -20,27 +21,42 @@ ID = Setting.ID;
 url = Setting.url;
 Rtime = Setting.time
 dist = Setting.dist
+# ch = Checker(ID, url, time, sensor);
+# ch.start();
 
-pre_exist = False #現在のavailable
+#url = "http://ec2-54-65-10-97.ap-northeast-1.compute.amazonaws.com/"
+
+
+def send_json(url, ID):
+    json_data = {"room_id": id, "status": 0}
+
+    headers={'content-type': 'application/json'}
+    encoded_json=json.dumps(json_data)
+    response = requests.post(url, data=encoded_json, headers=headers)
+
+    print response
+    print encoded_json
+
+send_json(url,ID)
 
 while(True):
     if(reading(0)<dist):
         print "true"
         #send room information to server 
-        ch = Checker(ID, url, True, pre_exist)
-        pre_exist = ch.start() 
-        sp = subprocess.Popen(cmdline,preexec_fn=os.setsid) #subprocess called
+        ch = Checker(ID, url, True)
+        ch.start() 
+        #sp = subprocess.Popen(cmdline,preexec_fn=os.setsid) #subprocess called
         while(sp.poll() == None):
             time.sleep(Rtime)
             if(reading(0)>dist):
                 print "break"
-                os.killpg(sp.pid, signal.SIGTERM) #subprocess is stoped, send SIGTERM signal
+                #os.killpg(sp.pid, signal.SIGTERM) #subprocess is stoped, send SIGTERM signal
                 break
     else:
         print "false"
          #send room information to server 
-        ch = Checker(ID, url, False, pre_exist)
-        pre_exist = ch.start()
+        ch = Checker(ID, url, False)
+        ch.start()
 
     time.sleep(Rtime)
 
