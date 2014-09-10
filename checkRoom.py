@@ -10,13 +10,13 @@ import json
 
 
 class Checker:
-    def __init__(self, id, dist, url, time):
+    def __init__(self, id, url, time, sensor):
         # 端末の固有IDを登録
         self.id = id
         self.existence = False
-        self.dist = dist
         self.time = time
         self.url = url + "/" + str(self.id) + "/"
+        self.sensor = sensor #センサー情報（人がいればtrue）
 
     #監視処理の開始
     def start(self):
@@ -27,12 +27,12 @@ class Checker:
             # 距離の取得間隔
             time.sleep(self.time)
             # 距離の取得
-            d = reading(0)
+            #d = reading(0)
 
             try:
                 print d
 
-                if d < self.dist:
+                if self.sensor:
                     # もし規定距離内に反応があった場合
                     self.exist()
                 else:
@@ -72,10 +72,9 @@ class Checker:
             print r
 
 
-if __name__ == '__main__':
-    ID = Setting.ID;
-    DIST = Setting.dist;
-    url = Setting.url;
-    time = Setting.time
-    ch = Checker(ID, DIST, url, time);
-    ch.start();
+# if __name__ == '__main__':
+#     ID = Setting.ID;
+#     url = Setting.url;
+#     time = Setting.time
+#     ch = Checker(ID, url, time, sensor);
+#     ch.start();
