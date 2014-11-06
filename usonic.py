@@ -6,6 +6,22 @@ import cv2
 # GPIO output = the pin that's connected to "Trig" on the sensor
 # GPIO input = the pin that's connected to "Echo" on the sensor
 
+updatelock = False # トラックバー処理中のロックフラグ
+windowname = 'frame' # Windowの名前
+trackbarname = 'Position' # トラックバーの名前
+
+    # MP4ファイルを読む
+    # MP4は適当な長さのサンプルをインターネットから拾ってくる
+    # 参考:http://www.engr.colostate.edu/me/facil/dynamics/avis.htm
+    # http://www.gomplayer.jp/player/support/sample.htmlから取ってきました
+cap = cv2.VideoCapture('mp4_h264_aac.mp4')
+
+# トラックバーを動かしたときに呼び出されるコールバック関数の定義
+def onTrackbarSlide(pos):
+    updatelock = True
+    cap.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, pos)
+    updatelock = False
+
 def reading(sensor):
     import time
     import RPi.GPIO as GPIO
@@ -90,21 +106,6 @@ def reading(sensor):
         
 if(reading(0)<100):
     print "true"
-    updatelock = False # トラックバー処理中のロックフラグ
-    windowname = 'frame' # Windowの名前
-    trackbarname = 'Position' # トラックバーの名前
-
-    # MP4ファイルを読む
-    # MP4は適当な長さのサンプルをインターネットから拾ってくる
-    # 参考:http://www.engr.colostate.edu/me/facil/dynamics/avis.htm
-    # http://www.gomplayer.jp/player/support/sample.htmlから取ってきました
-    cap = cv2.VideoCapture('mp4_h264_aac.mp4')
-
-# トラックバーを動かしたときに呼び出されるコールバック関数の定義
-    def onTrackbarSlide(pos):
-        updatelock = True
-        cap.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, pos)
-        updatelock = False
 
 # 名前付きWindowを定義する
     cv2.namedWindow(windowname, cv2.WINDOW_NORMAL)
