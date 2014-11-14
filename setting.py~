@@ -1,0 +1,8 @@
+#!/usr/bin/python
+#coding: UTF-8
+
+class Setting:
+    def __init__(self):
+        self.url = "http://example.com"
+        self.ID = 0
+        self.dist = 100

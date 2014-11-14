@@ -1,36 +1,20 @@
 #!/usr/bin/python
     # coding: UTF-8
 import numpy as np
-import RPi.GPIO as GPIO
 import cv2
+import RPi.GPIO as GPIO
 import time
+
 # remember to change the GPIO values below to match your sensors
 # GPIO output = the pin that's connected to "Trig" on the sensor
 # GPIO input = the pin that's connected to "Echo" on the sensor
 
-updatelock = False # トラックバー処理中のロックフラグ
-windowname = 'frame' # Windowの名前
-trackbarname = 'Position' # トラックバーの名前
-
-    # MP4ファイルを読む
-    # MP4は適当な長さのサンプルをインターネットから拾ってくる
-    # 参考:http://www.engr.colostate.edu/me/facil/dynamics/avis.htm
-    # http://www.gomplayer.jp/player/support/sample.htmlから取ってきました
-cap = cv2.VideoCapture('mp4_h264_aac.mp4')
-
-# トラックバーを動かしたときに呼び出されるコールバック関数の定義
-def onTrackbarSlide(pos):
-    updatelock = True
-    cap.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, pos)
-    updatelock = False
-
 #センサーで距離を読み取る関数
 def reading(sensor):
-    print "now reading"
     
     signalon = 0
-#signaloffがechoの一番目のwhileで上手く代入されないことがあるので
-#初期化しておく
+    #signaloffがechoの一番目のwhileで上手く代入されないことがあるので
+    #初期化しておく
     signaloff = 0
     # Disable any warning message such as GPIO pins in use
     GPIO.setwarnings(False)
@@ -113,7 +97,6 @@ def reading(sensor):
         distance = timepassed * 17000
         
         # return the distance of an object in front of the sensor in cm
-        print distance
         return distance
         
         # we're no longer using the GPIO, so tell software we're done
@@ -123,63 +106,3 @@ def reading(sensor):
         print "Incorrect usonic() function varible."
 
 
-print "Start sencing"
-while(True):
-    print "scan distance"
-    if(reading(0)<100):#距離が100cm以内であれば
-        print "true"
-
-        # 名前付きWindowを定義する
-        cv2.namedWindow(windowname, cv2.WINDOW_NORMAL)
-
-        # MP4ファイルのフレーム数を取得する
-        frames = int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT))
-        print "frame:",frames
-        # フレーム数が1以上ならトラックバーにセットする
-        if (frames > 0):
-            cv2.createTrackbar(trackbarname, windowname, 0, frames, onTrackbarSlide)
-            print "1"
-            # MP4ファイルを開いている間は繰り返し（最後のフレームまで読んだら終わる）
-            while(cap.isOpened()):
-                print "2"
-                # トラックバー更新中は描画しない
-                if (updatelock):
-                    continue
-
-                # １フレーム読む
-                ret, frame = cap.read()
-
-                # 読めなかったら抜ける
-                if ret == False:
-                    print "3"
-                    break
-
-                # 画面に表示
-                cv2.imshow(windowname,frame)
-
-                # 現在のフレーム番号を取得
-                curpos = int(cap.get(cv2.cv.CV_CAP_PROP_POS_FRAMES))
-                
-                # トラックバーにセットする（コールバック関数が呼ばれる）
-                cv2.setTrackbarPos(trackbarname, windowname, curpos)
-
-                # qを押したら抜ける
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
-                # 人が100cmより離れたら抜ける
-                if (reading(0)>100):
-                    print "testes"
-                    break
-
-
-                # mp4ファイルを解放
-           # cap.release()
-
-                # Windowを閉じる
-            print "4"
-            cv2.destroyAllWindows()
-
-    else:
-        print "false"
-
-    time.sleep(3)#３秒ごとに距離を測る
