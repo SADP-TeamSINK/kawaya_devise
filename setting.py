@@ -5,3 +5,4 @@ class Setting:
     url = "http://example.com"
     ID = 0
     dist = 100
+    time = 10

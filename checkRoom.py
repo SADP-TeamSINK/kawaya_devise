@@ -9,11 +9,12 @@ import requests
 
 
 class Checker:
-    def __init__(self, id, dist, url):
+    def __init__(self, id, dist, url, time):
         # 端末の固有IDを登録
         self.id = id
         self.existence = False
         self.dist = dist
+        self.time = time
         self.url = url + "/" + str(self.id) + "/"
 
     #監視処理の開始
@@ -21,8 +22,12 @@ class Checker:
         print "Start to check this room!"
         while True:
             print "Now, there is ", self.existence
-            time.sleep(1);
+
+            # 距離の取得間隔
+            time.sleep(self.time)
+            # 距離の取得
             d = reading(0)
+
             try:
                 print d
 
@@ -58,5 +63,6 @@ if __name__ == '__main__':
     ID = Setting.ID;
     DIST = Setting.dist;
     url = Setting.url;
-    ch = Checker(ID, DIST, url);
+    time = Setting.time
+    ch = Checker(ID, DIST, url, time);
     ch.start();
