@@ -126,24 +126,24 @@ while(True):
     if(reading(0)<100):#距離が100cm以内であれば
         print "true"
 
-# 名前付きWindowを定義する
+        # 名前付きWindowを定義する
         cv2.namedWindow(windowname, cv2.WINDOW_NORMAL)
 
-# MP4ファイルのフレーム数を取得する
+        # MP4ファイルのフレーム数を取得する
         frames = int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT))
         print "frame:",frames
-# フレーム数が1以上ならトラックバーにセットする
+        # フレーム数が1以上ならトラックバーにセットする
         if (frames > 0):
             cv2.createTrackbar(trackbarname, windowname, 0, frames, onTrackbarSlide)
             print "1"
-# MP4ファイルを開いている間は繰り返し（最後のフレームまで読んだら終わる）
+            # MP4ファイルを開いている間は繰り返し（最後のフレームまで読んだら終わる）
             while(cap.isOpened()):
                 print "2"
-    # トラックバー更新中は描画しない
+                # トラックバー更新中は描画しない
                 if (updatelock):
                     continue
 
-        # １フレーム読む
+                # １フレーム読む
                 ret, frame = cap.read()
 
                 # 読めなかったら抜ける
