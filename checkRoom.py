@@ -53,7 +53,7 @@ class Checker:
             headers={'content-type': 'application/json'}
             api_url=self.url
             print "send to: ", api_url
-            r = requests.post(api_url, data=json.dumps(json_data), headers=headers)
+            r = requests.post(api_url, data=json.dumps(json_data,indent=2), headers=headers)
             print r
 
     # センサーが人を完治しなかった場合
@@ -68,7 +68,7 @@ class Checker:
             headers={'content-type': 'application/json'}
             api_url=self.url
             print "send to: ", api_url
-            r = requests.post(api_rl, data=json.dumps(json_data), headers=headers)
+            r = requests.post(api_rl, data=json.dumps(json_data,indent=2), headers=headers)
             print r
 
 
