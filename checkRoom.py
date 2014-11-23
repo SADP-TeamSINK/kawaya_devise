@@ -6,6 +6,7 @@ import time
 from util import reading
 from setting import Setting
 import requests
+import json
 
 
 class Checker:
@@ -45,18 +46,30 @@ class Checker:
         print "someone exists"
         if not self.existence:
             self.existence = True
-            api_url = self.url + "1"
-            print "api-url: ", api_url
-            r = requests.patch(api_url)
+            # api_url = self.url + "1"
+            # print "api-url: ", api_url
+            # r = requests.patch(api_url)
+            json_data = {"room_id": self.id, "status": 1}
+            headers={'content-type': 'application/json'}
+            api_url=self.url
+            print "send to: ", api_url
+            r = requests.post(api_url, data=json.dumps(json_data), headers=headers)
+            print r
 
     # センサーが人を完治しなかった場合
     def not_exist(self):
         print "noone exists"
         if self.existence:
             self.existence = False
-            api_url = self.url + "0"
-            print "api-url: ", api_url
-            r = requests.patch(api_url)
+            # api_url = self.url + "0"
+            # print "api-url: ", api_url
+            # r = requests.patch(api_url)
+            json_data = {"room_id": self.id, "status": 0}
+            headers={'content-type': 'application/json'}
+            api_url=self.url
+            print "send to: ", api_url
+            r = requests.post(api_rl, data=json.dumps(json_data), headers=headers)
+            print r
 
 
 if __name__ == '__main__':
